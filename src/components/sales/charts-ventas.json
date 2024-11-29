@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_sales_charts_ventas",
+  "info": {
+    "displayName": "ChartsVentas",
+    "icon": "chartPie"
+  },
+  "options": {},
+  "attributes": {
+    "data": {
+      "type": "json"
+    }
+  }
+}

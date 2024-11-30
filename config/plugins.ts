@@ -1,3 +1,1 @@
-export default () => ({
-    chartbrew: true
-});
+export default () => ({});

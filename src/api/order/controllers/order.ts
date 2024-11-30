@@ -10,22 +10,24 @@ export default factories.createCoreController("api::order.order", ({ strapi }) =
         const { products } = ctx.request.body;
 
         try {
-           /* const lineItems = await Promise.all(
+
+           const lineItems = await Promise.all(
                 products.map(async (product) => {
-                   const item = await strapi.service("api::product.product").findOne(1);
-                   
+
+                   //const item = await strapi.service("api::product.product").findOne(product.id);
+
                     return {
                         price_data: {
                             currency: "mxn",
                             product_data: {
-                                name: item.productName,
+                                name: product.productName,
                             },
-                            unit_amount: Math.round(item.price * 100),
+                            unit_amount: Math.round(product.price * 100),
                         },
                         quantity: 1,
                     };
                 })
-            );*/
+            );
 
             const session = await stripe.checkout.sessions.create({
                 shipping_address_collection: { allowed_countries: ["US", "CA", "MX"] },
@@ -33,22 +35,10 @@ export default factories.createCoreController("api::order.order", ({ strapi }) =
                 mode: "payment",
                 success_url: process.env.CLIENT_URL + "/success",
                 cancel_url: process.env.CLIENT_URL + "/successError",
-                line_items:[
-                    {
-                        price_data: {
-                            currency: "mxn", // Cambia a "mxn" para pesos mexicanos
-                            product_data: {
-                                name: "Producto de Prueba",
-                                description: "Descripción del producto de prueba",
-                            },
-                            unit_amount: 1999, // El monto debe ser en centavos (19.99 pesos = 1999)
-                        },
-                        quantity: 1,
-                    },
-                ],
+                line_items: lineItems
             });
 
-            await strapi.service("api::order.order").create({data: {products, stripeId: session.id}});
+            await strapi.service("api::order.order").create({data: {products: lineItems, stripeId: session.id}});
             //console.log(session)
             return { stripeSession: session };
 
